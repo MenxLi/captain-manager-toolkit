@@ -1,4 +1,8 @@
-[dockerfile](https://docs.docker.com/engine/reference/builder/)
+## Installation
+```sh
+apt install docker.io
+```
+[What is docker.io in relation to docker-ce and docker-ee](https://stackoverflow.com/a/57678382/6775765)
 
 ## Hub 换源
 [Docker Hub 镜像源](https://juejin.cn/post/7165806699461378085)
@@ -48,7 +52,9 @@ docker ps --no-trunc  # long id
 docker inspect ...
 ```
 
-# build
+# Build docker image
+[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+
 ```
 docker build -t <image_name> .
 docker tag <image_name> <new_image_name>
@@ -56,7 +62,7 @@ docker tag <image_name> <new_image_name>
 
 build with `--network host` to use host ip and proxy
 
-## Docker volumes
+# Docker storage
 [Official-volumes](https://docs.docker.com/storage/volumes/)
 Create:
 ```sh
@@ -130,12 +136,6 @@ docker logs <container_name>
 docker attach <container_name>
 ```
 
-# Hub
-```
-docker push <image_name>
-```
-
-
 ## Space check and Prune
 ### Check space
 [How to Check Disk Space Usage for Docker Images, Containers and Volumes](https://linuxhandbook.com/docker-disk-space-usage/)
@@ -162,14 +162,20 @@ docker image prune
 ```
 
 
-## NVIDIA Docker
+# NVIDIA Docker
 [Installation](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 (CDI - [container-device-interface](https://github.com/container-orchestrated-devices/container-device-interface/blob/main/SPEC.md))
 examples:
 ```sh
-sudo docker run --rm -it --runtime=nvidia --gpus all nvidia/cuda:11.7.1-devel-ubuntu22.04
-```
+docker run --rm -it --runtime=nvidia --gpus all nvidia/cuda:11.7.1-devel-ubuntu22.04
 
+docker run -t -d \
+	-p $(SSH_PORT):22 \
+	-v $(MOUNT_VOL):/workspace/ \
+	--gpus 'all,"capabilities=compute,utility,graphics"' \
+	--ipc=host --ulimit memlock=-1 --ulimit stack=67108864 \
+	--name $(CONTAINER_NAME) $(DOCKER_IMAGE)
+```
 
 ## Save and transfer docker image
 [Save and transfer docker image](https://stackoverflow.com/questions/23935141/how-to-copy-docker-images-from-one-host-to-another-without-using-a-repository)
