@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/limengxun/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
 
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 RUN apt-get update -y && apt-get upgrade -y
