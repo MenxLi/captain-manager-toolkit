@@ -11,7 +11,7 @@ class ContainerConfig:
     container_name: str
     volumes: list[str]          # e.g. ["/host/path:/container/path"]
     port_mapping: list[str]     # e.g. ["8000:8000", "8888:8888"]
-    gpu_ids: list[int]
+    gpu_ids: Optional[list[int]]
     memory_limit: str           # e.g. "8g"
 
     # default values
@@ -19,18 +19,29 @@ class ContainerConfig:
     tty = True
     auto_remove = False
     detach = True
+    entrypoint: Optional[str | list[str]] = None
 
 def create_container(
     client: docker.client.DockerClient,
     config: ContainerConfig
     ):
-    gpus = [
-        docker.types.DeviceRequest(
-            capabilities=[["compute", "utility", "graphics"]], 
-            driver="nvidia", 
-            device_ids=[f"{gpu_id}" for gpu_id in config.gpu_ids]
-        )
-    ]
+    if not config.gpu_ids is None:
+        gpus = [
+            docker.types.DeviceRequest(
+                capabilities=[["compute", "utility", "graphics"]], 
+                driver="nvidia", 
+                device_ids=[f"{gpu_id}" for gpu_id in config.gpu_ids]
+            )
+        ]
+    else:
+        # all gpus
+        gpus = [
+            docker.types.DeviceRequest(
+                capabilities=[["compute", "utility", "graphics"]], 
+                driver="nvidia", 
+                count=-1
+            )
+        ]
     # https://docker-py.readthedocs.io/en/stable/containers.html
     container = client.containers.run(
         image=config.image_name,
@@ -43,7 +54,8 @@ def create_container(
         tty=config.tty, 
         detach=config.detach,                   # type: ignore
         restart_policy=config.restart_policy, 
-        auto_remove=config.auto_remove
+        auto_remove=config.auto_remove, 
+        entrypoint=config.entrypoint
 
     )   # type: ignore
     return container.logs()

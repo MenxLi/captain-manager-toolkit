@@ -41,4 +41,5 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-12.1/lib64"
 
 WORKDIR /root
 EXPOSE 22
-EXPOSE 8080
+EXPOSE 8000
+ENTRYPOINT service ssh restart && bash
