@@ -1,5 +1,6 @@
 import pynvml
 from dataclasses import dataclass
+from .errors import InvalidInputError
 
 @dataclass
 class GPUProcess:
@@ -19,7 +20,12 @@ def list_processes_on_gpus(gpu_ids: list[int]) -> dict[int, list[GPUProcess]]:
     pynvml.nvmlInit()
     processes = {}
     for gpu_id in gpu_ids:
-        handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
+        try:
+            handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
+        except pynvml.NVMLError as e:
+            if "invalid argument" in str(e).lower():
+                raise InvalidInputError(f"GPU ID {gpu_id} is invalid")
+            raise e
         info = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)
         processes[gpu_id] = [
             GPUProcess(

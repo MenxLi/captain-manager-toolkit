@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from docker.models.containers import _RestartPolicy
 
+from .errors import ContainerNotFoundError
+
 @dataclass
 class ContainerConfig:
     image_name: str
@@ -73,6 +75,18 @@ def restart_container(
     if not execute_after_restart is None:
         container.exec_run(execute_after_restart, tty=True)
     return container.logs()
+
+def query_container_by_id(
+    client: docker.client.DockerClient,
+    container_id: str
+    ):
+    container = client.containers.get(container_id)
+    if container is None: raise ContainerNotFoundError(f"Container {container_id} not found")
+    return {
+        "name": container.name,
+        "status": container.status,
+        "ports": container.ports,
+    }
 
 if __name__ == "__main__":
     client = docker.from_env()
