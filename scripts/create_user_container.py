@@ -1,7 +1,7 @@
+from pody.docker_utils import create_container, ContainerConfig
 import argparse
 import docker
 from typing import Optional, List
-from .docker_utils import create_container, ContainerConfig
 
 def create_user_container(
     username: str, 
