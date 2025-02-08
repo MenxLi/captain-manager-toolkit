@@ -60,6 +60,20 @@ def create_container(
     )   # type: ignore
     return container.logs()
 
+def restart_container(
+    client: docker.client.DockerClient,
+    container_name: str, 
+    execute_before_restart: Optional[str] = None, 
+    execute_after_restart: Optional[str] = None
+    ):
+    container = client.containers.get(container_name)
+    if not execute_before_restart is None:
+        container.exec_run(execute_before_restart, tty=True)
+    container.restart()
+    if not execute_after_restart is None:
+        container.exec_run(execute_after_restart, tty=True)
+    return container.logs()
+
 if __name__ == "__main__":
     client = docker.from_env()
     config = ContainerConfig(

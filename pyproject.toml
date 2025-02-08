@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pody"
-version = "0.1.0"
+version = "0.0.1"
 description = "Pod manager, for our lab :)"
 authors = ["Li, Mengxun <mengxunli@whu.edu.cn>"]
 readme = "pody/README.md"
@@ -11,12 +11,13 @@ docker = "*"
 nvidia-ml-py = "*"
 fastapi = "0.*"
 uvicorn = "0.*"
+typer = "0.*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 
 [tool.poetry.scripts]
-pody-serve = "pody.serve:main"
+pody-serve = "pody.cli.serve:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
