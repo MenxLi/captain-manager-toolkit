@@ -18,6 +18,7 @@ docker_client = docker.from_env()
 async def log_requests(request, call_next):
     print(f"Request: {request.url}")
     print(f"Headers: {request.headers}")
+    print(f"From: {request.client.host}")
     response = await call_next(request)
     return response
 
@@ -31,4 +32,4 @@ def start_server(
     workers: Optional[int] = None,
 ):
     import uvicorn
-    uvicorn.run(app, host=host, port=port, workers=workers)
+    uvicorn.run(f"pody.svc.app:app", host=host, port=port, workers=workers)
