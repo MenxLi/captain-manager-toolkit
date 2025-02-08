@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pody"
-version = "0.1.0"
-description = "Pod manager, for our lab :)"
+version = "0.1.1"
+description = "Pod manager for docker, give limited access to docker for clients."
 authors = ["Li, Mengxun <mengxunli@whu.edu.cn>"]
 readme = "pody/README.md"
 
