@@ -6,9 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import HTTPException
 import docker
 
-from ..eng.docker import restart_container, query_container_by_id
-from ..eng.gpu import list_processes_on_gpus, GPUProcess
+from ..eng.docker import restart_container
 from ..eng.errors import *
+
+from .impl import *
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
@@ -52,29 +53,11 @@ def restart_pod(container_name: str):
 @app.get("/gpu-status")
 @handle_exception
 def gpu_status(id: str):
-    def _container_id_from_cgoup(cgoup: str) -> Optional[str]:
-        last = cgoup.split("/")[-1]
-        if not last.startswith("docker-"): return None
-        if not last.endswith(".scope"): return None
-        return last[len("docker-"):-len(".scope")]
-    def process_gpu_proc(gpu_proc: GPUProcess):
-        container_id = _container_id_from_cgoup(gpu_proc.cgoup)
-        if container_id is None: return {"pid": gpu_proc.pid, "gpu_memory_used": gpu_proc.gpu_memory_used, "container": None}   # not running in a container
-        container_info = query_container_by_id(docker_client, container_id)
-        if container_info is not None:
-            del container_info["ports"]
-            del container_info["status"]
-        return {
-            "pid": gpu_proc.pid,
-            "gpu_memory_used": gpu_proc.gpu_memory_used,
-            "container": container_info
-        }
     try:
         _ids = [int(i.strip()) for i in id.split(",")]
     except ValueError:
         raise InvalidInputError("Invalid GPU ID")
-    gpu_procs = list_processes_on_gpus(_ids)
-    return {gpu_id: [process_gpu_proc(proc) for proc in gpu_procs[gpu_id]] for gpu_id in gpu_procs}
+    return gpu_status_impl(docker_client, _ids)
                 
 def start_server(
     host: str = "0.0.0.0",
