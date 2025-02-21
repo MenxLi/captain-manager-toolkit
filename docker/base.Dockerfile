@@ -1,4 +1,5 @@
-FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+ARG CUDA_TAG=12.1.1-cudnn8-devel-ubuntu22.04
+FROM nvidia/cuda:${CUDA_TAG}
 
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 RUN apt-get update -y && apt-get upgrade -y
@@ -39,7 +40,7 @@ RUN dpkg-reconfigure --frontend noninteractive tzdata
 ENV PATH="$PATH:/usr/local/cuda-12.1/bin"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-12.1/lib64"
 
-WORKDIR /root
+WORKDIR /workspace
 EXPOSE 22
 EXPOSE 8000
 ENTRYPOINT service ssh restart && bash
