@@ -1,4 +1,5 @@
 
+# https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
 IMAGE_NAME:=captain-cuda
 CUDA_TAG:=12.1.1-cudnn8-devel-ubuntu22.04
 
