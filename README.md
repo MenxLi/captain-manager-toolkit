@@ -16,7 +16,14 @@ make jump-run
 
 可以通过以下命令添加用户
 ```bash
+# docker exec -it jump bash -c "create_user.sh <username> <public_key>"
+# or: 
 make jump-add
 ```
 使用`ssh -p 2222 <username>@<host_ip>`连接到跳板容器。
 在主机上使用`docker exec -it jump bash`进入容器进行用户管理。
+
+删除用户可以使用以下命令：
+```bash
+docker exec -it jump bash -c "userdel -r <username>"
+```

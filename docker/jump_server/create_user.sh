@@ -13,17 +13,17 @@ USERNAME=$1
 PUBLIC_KEY=$2
 USERGROUP="captain_users"
 
-generate_strong_password() {
-    local password_length=32
-    local special_chars='!^()-_=+:.?'
-    local all_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'"$special_chars"
-    local password=$(cat /dev/urandom | tr -dc "$all_chars" | fold -w "$password_length" | head -n 1)
-    echo "$password"
-}
-
 useradd -m -d /home/$USERNAME -s /bin/bash -g $USERGROUP $USERNAME
 
-echo "$USERNAME:$(generate_strong_password)" | chpasswd
+# generate_strong_password() {
+#     local password_length=32
+#     local special_chars='!^()-_=+:.?'
+#     local all_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'"$special_chars"
+#     local password=$(cat /dev/urandom | tr -dc "$all_chars" | fold -w "$password_length" | head -n 1)
+#     echo "$password"
+# }
+# echo "$USERNAME:$(generate_strong_password)" | chpasswd
+passwd -d $USERNAME
 
 USER_SSH_DIR="/home/$USERNAME/.ssh"
 mkdir -p $USER_SSH_DIR
