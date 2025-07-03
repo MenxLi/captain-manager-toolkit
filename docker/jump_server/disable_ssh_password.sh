@@ -18,6 +18,14 @@ fi
 sed -i -E 's|^#?(ChallengeResponseAuthentication)\s.*|\1 no|' "$SSHD_CONFIG_FILE"
 sed -i -E 's|^#?(UsePAM)\s.*|\1 no|' "$SSHD_CONFIG_FILE"
 
+# allow public key authentication
+sed -i -E 's|^#?(PubkeyAuthentication)\s.*|\1 yes|' "$SSHD_CONFIG_FILE"
+
+# Optional: allow forwarding
+# sed -i -E 's|^#?(AllowAgentForwarding)\s.*|\1 yes|' "$SSHD_CONFIG_FILE"
+sed -i -E 's|^#?(AllowTcpForwarding)\s.*|\1 yes|' "$SSHD_CONFIG_FILE"
+sed -i -E 's|^#?(GatewayPorts)\s.*|\1 yes|' "$SSHD_CONFIG_FILE"
+
 # echo "Restarting SSH service..."
 # systemctl restart ssh
 echo "SSH password authentication disabled. Please ensure key-based authentication is working before exiting."
