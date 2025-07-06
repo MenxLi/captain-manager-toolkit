@@ -15,9 +15,9 @@ Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg \
 
 RUN apt-get update -y && apt-get upgrade -y
 
-RUN apt-get install -y python3 python3-pip python3-dev
 RUN apt-get install -y openssh-server
-RUN apt-get install -y tmux vim htop iproute2
+RUN apt-get install -y python3 python3-pip python3-venv python3-dev
+RUN apt-get install -y tmux vim htop iproute2 iputils-ping
 
 RUN pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 

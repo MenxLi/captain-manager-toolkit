@@ -36,7 +36,3 @@ fi
 chmod 700 $USER_SSH_DIR
 chmod 600 $USER_SSH_DIR/authorized_keys
 chown -R $USERNAME:$USERGROUP $USER_SSH_DIR
-
-su - $USERNAME -c "pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
-su - $USERNAME -c "echo alias python='python3' >> ~/.bashrc\n"
-su - $USERNAME -c "echo alias pip='pip3' >> ~/.bashrc\n"
