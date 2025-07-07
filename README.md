@@ -1,6 +1,8 @@
 # captain-manager-toolkit
-server resource manager toolkit
 
+实验室服务器管理用脚本和镜像:)
+
+构建计算节点镜像：
 ```bash
 make image CUDA_TAG="12.6.3-cudnn-devel-ubuntu22.04"
 ```
