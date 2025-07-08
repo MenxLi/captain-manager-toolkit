@@ -2,10 +2,13 @@
 
 实验室服务器管理用脚本和镜像:)
 
+## 镜像管理
 构建计算节点镜像：
 ```bash
 make image CUDA_TAG="12.6.3-cudnn-devel-ubuntu22.04"
 ```
+
+使用[`pody`](https://menxli.github.io/pody/deploy.html)管理容器和镜像
 
 ## 跳板容器
 跳板容器允许用户通过统一的入口连接到其他局域网内的计算节点进行管理，
