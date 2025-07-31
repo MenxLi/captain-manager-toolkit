@@ -36,15 +36,20 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 
-ENV PATH="$PATH:/usr/local/cuda-12.1/bin"
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-12.1/lib64"
-
 WORKDIR /workspace
 EXPOSE 22
 EXPOSE 8000
 
+# install miniconda
+# https://www.anaconda.com/docs/getting-started/miniconda/install
+RUN mkdir -p ~/miniconda3
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+RUN rm ~/miniconda3/miniconda.sh
+RUN . ~/miniconda3/bin/activate && conda init --all
+
 # entrypoint
 # ENTRYPOINT service ssh restart && bash
-RUN echo '#!/bin/bash\nservice ssh restart\nexec "$@"' > /usr/local/bin/entrypoint.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
