@@ -11,10 +11,10 @@ JUMP_CONTAINER_NAME:=jump
 
 image:
 	@echo "\033[92mBuilding Docker Image\033[0m"
-	cd ./docker; \
+	cd ./docker/base; \
 	docker build --build-arg CUDA_TAG=$(CUDA_TAG) \
 	-t $(IMAGE_NAME):$(CUDA_TAG) -f ./base.Dockerfile . ;\
-	cd ..
+	cd ../..
 
 jump-build:
 	@echo "\033[92mBuilding Jump Server Image\033[0m"
