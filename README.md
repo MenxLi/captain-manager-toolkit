@@ -5,7 +5,7 @@
 ## 镜像管理
 构建计算节点镜像：
 ```bash
-make image CUDA_TAG="12.6.3-cudnn-devel-ubuntu22.04"
+make image CUDA_TAG="12.6.3-cudnn-devel-ubuntu24.04"
 ```
 
 使用[`pody`](https://menxli.github.io/pody/deploy.html)管理容器和镜像

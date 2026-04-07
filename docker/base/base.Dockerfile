@@ -1,7 +1,23 @@
-ARG CUDA_TAG=12.1.1-cudnn8-devel-ubuntu22.04
+ARG CUDA_TAG=12.6.3-cudnn-devel-ubuntu24.04
 FROM nvcr.io/nvidia/cuda:${CUDA_TAG}
 
-RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+ARG ARCH=amd64
+
+RUN if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then \
+        echo "Unsupported architecture: $ARCH" && exit 1; \
+    fi
+
+RUN if [ -f /etc/apt/sources.list ]; then \
+        sed -i \
+            -e 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.aliyun.com/ubuntu/|g' \
+            -e 's|http://security.ubuntu.com/ubuntu/|http://mirrors.aliyun.com/ubuntu/|g' \
+            /etc/apt/sources.list; \
+    fi && \
+    if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then \
+        sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.aliyun.com/ubuntu/|g; s|http://security.ubuntu.com/ubuntu/|http://mirrors.aliyun.com/ubuntu/|g' \
+            /etc/apt/sources.list.d/ubuntu.sources; \
+    fi
+
 RUN apt-get update -y && apt-get upgrade -y
 
 # some dev tools
@@ -43,10 +59,17 @@ EXPOSE 8000
 # install miniconda
 # https://www.anaconda.com/docs/getting-started/miniconda/install
 RUN mkdir -p ~/miniconda3
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+RUN if [ "$ARCH" = "amd64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh; \
+    elif [ "$ARCH" = "arm64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O ~/miniconda3/miniconda.sh; \
+    fi
 RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
 RUN rm ~/miniconda3/miniconda.sh
 RUN . ~/miniconda3/bin/activate && conda init --all
+
+# install uv
+RUN curl -sSf https://install.astral.sh/uv | sh
 
 # entrypoint
 # ENTRYPOINT service ssh restart && bash
