@@ -1,2 +1,5 @@
 #!/bin/bash
-service ssh restart && bash
+set -e
+
+service ssh start
+exec "$@"

@@ -38,17 +38,6 @@ RUN apt-get install -y curl wget iproute2 iputils-ping proxychains-ng
 RUN apt-get install -y htop iftop lsof
 RUN apt-get install -y zip unzip
 
-# cpp things
-RUN apt-get install -y clangd bear
-
-# install python things
-RUN apt-get install -y python3 python3-pip python3-dev python3-venv
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-RUN echo '\nalias python=python3\nalias pip=pip3\n' >> .bashrc
-
-# common libs
-RUN apt-get install -y libsqlite3-dev libomp-dev libnuma-dev
-
 # locale
 RUN apt-get install -y locales
 RUN locale-gen zh_CN.UTF-8
@@ -61,6 +50,17 @@ ARG TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 RUN dpkg-reconfigure --frontend noninteractive tzdata
+
+# cpp things
+RUN apt-get install -y clangd bear
+
+# install python things
+RUN apt-get install -y python3 python3-pip python3-dev python3-venv
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN echo '\nalias python=python3\nalias pip=pip3\n' >> .bashrc
+
+# common libs
+RUN apt-get install -y libsqlite3-dev libomp-dev libnuma-dev
 
 # miniconda
 # https://www.anaconda.com/docs/getting-started/miniconda/install
@@ -80,12 +80,15 @@ RUN curl -sSf https://install.astral.sh/uv | sh
 # rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
+# node
+RUN git clone https://github.com/nvm-sh/nvm.git ~/.nvm && cd ~/.nvm && git checkout `git describe --abrev=0 --tags`
+RUN . ~/.nvm/nvm.sh && nvm install --lts && nvm use --lts && nvm alias --lts
+
 WORKDIR /workspace
 EXPOSE 22
 EXPOSE 8000
 
 # entrypoint
-# ENTRYPOINT service ssh restart && bash
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY --chmod=755 ./entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["bash"]
