@@ -8,9 +8,15 @@ JUMP_VOLUME:=captain_user_home
 JUMP_IMAGE_NAME:=captain-jump
 JUMP_CONTAINER_NAME:=jump
 
-.PHONY: image
+.PHONY: image assets assets-clean jump-build jump-run jump-add
 
-image:
+assets:
+	@bash ./init_assets.sh
+
+assets-clean:
+	@bash ./init_assets.sh clean
+
+image: assets
 	@echo "\033[92mBuilding Docker Image\033[0m"
 	cd ./docker/base; \
 	docker build --build-arg \

@@ -164,3 +164,9 @@ cython_debug/
 
 # Macos
 .DS_Store
+
+# ============================================================
+# Custom ignores
+
+docker/base/assets/*
+!docker/base/assets/.gitkeep

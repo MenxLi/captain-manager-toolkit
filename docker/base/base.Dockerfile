@@ -62,27 +62,26 @@ RUN echo '\nalias python=python3\nalias pip=pip3\n' >> .bashrc
 # common libs
 RUN apt-get install -y libsqlite3-dev libomp-dev libnuma-dev
 
+# ============== Installation from external assets ==============
+
+# COPY does not run through a shell, so ~ will not expanded
+COPY ./assets/ /root/assets
+
 # miniconda
 # https://www.anaconda.com/docs/getting-started/miniconda/install
 RUN mkdir -p ~/miniconda3
-RUN if [ "$ARCH" = "amd64" ]; then \
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh; \
-    elif [ "$ARCH" = "arm64" ]; then \
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O ~/miniconda3/miniconda.sh; \
-    fi
-RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-RUN rm ~/miniconda3/miniconda.sh
+RUN bash ~/assets/miniconda.sh -b -u -p ~/miniconda3
 RUN . ~/miniconda3/bin/activate && conda init --all
 
 # uv
-RUN curl -sSf https://install.astral.sh/uv | sh
+RUN sh ~/assets/uv_install.sh
 
 # rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN sh ~/assets/rustup.sh -y
 
 # node
-RUN git clone https://github.com/nvm-sh/nvm.git ~/.nvm && cd ~/.nvm && git checkout `git describe --abrev=0 --tags`
-RUN . ~/.nvm/nvm.sh && nvm install --lts && nvm use --lts && nvm alias --lts
+RUN cp -r ~/assets/nvm ~/.nvm
+RUN . ~/.nvm/nvm.sh && nvm install --lts && nvm use --lts
 
 WORKDIR /workspace
 EXPOSE 22
